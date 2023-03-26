@@ -1,0 +1,27 @@
+{
+  "name": "vanilla-bat-hooks-debugger",
+  "version": "0.1.0",
+  "description": "About",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcelgleis/vanilla-bat-hooks-debugger.git"
+  },
+  "keywords": [
+    "VanillaJS",
+    "Debugger",
+    "Hooks",
+    "Plugins",
+    "Actions",
+    "Filters"
+  ],
+  "author": "Marcel Gleis",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/marcelgleis/vanilla-bat-hooks-debugger/issues"
+  },
+  "homepage": "https://github.com/marcelgleis/vanilla-bat-hooks-debugger#readme"
+}
