@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/marcelgleis/vanilla-bat-hooks-debugger/issues"
   },
-  "homepage": "https://github.com/marcelgleis/vanilla-bat-hooks-debugger#readme"
+  "homepage": "https://github.com/marcelgleis/vanilla-bat-hooks-debugger#readme",
+  "dependencies": {
+    "vanilla-bat-hooks": "^0.1.0"
+  }
 }
