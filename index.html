@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Demo</title>
+    <script src="hooks.js"></script>
+    <script src="hooks-log-debugger.js"></script>
+    <script src="hooks-html-debugger.js"></script>
+</head>
+<body>
+
+<h1>Lightweight VanillaJS Hook Library</h1>
+
+<div id="tabledb"></div>
+<style>
+    #tabledb > table                        { border: 1px solid #eee;
+                                              color: black;
+                                              background-color: white;
+                                            }
+    #tabledb > table tr > th                { background-color: #ccc; }
+    #tabledb > table tr:nth-of-type(even)   { background-color:#eee; }
+
+    #tabledb > table tr[data-event="hooks_action_register"] { display: none; }
+    #tabledb > table tr[data-event="hooks_actions_execute"] { display: none; }
+    #tabledb > table tr[data-event="hooks_actions_executed"] { display: none; }
+    #tabledb > table tr[data-event="hooks_action_execute"] { display: none; }
+    _#tabledb > table tr[data-event="hooks_action_executed"] { display: none; }
+
+</style>
+
+<script>
+
+    hooks = new Hooks();
+    logdb = new HooksLogDebugger(hooks);
+    tabldb = new HooksHtmlDebugger(hooks, document.getElementById('tabledb'));
+
+    function genericDemo() {
+
+        // hello
+        hooks.register('hello', 'hello1', function() { console.log('hello 1'); });
+        hooks.register('hello', 'hello2', function() { console.log('hello 2'); });
+        hooks.execute('hello');
+
+        // echo
+        hooks.register('echo', 'echo args', function() {
+            console.log('echo: ', arguments);
+        });
+        hooks.execute('echo', 'The', 'World!', 'is', 'not', 'enough');
+
+        // calc
+        hooks.register('calc', 'add 1', function(value) { return value + 1; });
+        console.log(hooks.execute('calc', 1));
+
+        // sum
+        hooks.register('sum', 'sum a+b', function(a, b) { return a + b; });
+        console.log(hooks.execute('sum', 2, 3));
+    }
+
+    class Cart {
+
+        constructor(hooks) {
+            this.hooks = hooks;
+            this.items = [];
+        }
+        addItem(description, price) {
+            let item = {
+                "description": description,
+                "price": price
+            };
+            item = this.hooks.execute('cart.filter_item_will_be_added', item);
+            this.items.push(item);
+            this.hooks.execute('cart.item_added', item);
+        }
+        removeItem(description) {
+            let index = this.indexOfItem(description);
+            if (index != -1) {
+                this.items.splice(index, 1);
+            }
+        }
+        indexOfItem(description) {
+            for (let i = 0; i < this.items.length; i++) {
+                if (this.items[i].description == description) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        totalSum() {
+            let sum = 0;
+            for (let i = 0; i < this.items.length; i++) {
+                sum += this.items[i].price;
+            }
+            return sum;
+        }
+    }
+
+    function calcuationDemo() {
+
+        cart = new Cart(hooks);
+
+        hooks.register('cart.item_added', 'Add International Fee', function(item) {
+            let feeId = 'International Fee';
+            if (item.description != feeId) {
+                cart.removeItem(feeId);
+                cart.addItem(feeId, Math.round(100 * cart.totalSum() * 0.1) / 100);
+            }
+        });
+
+        hooks.register('cart.filter_item_will_be_added', 'Make Apples super-expensive', function(item) {
+            if (item.description == 'Apples') {
+                item.price = item.price * 2;
+            }
+            return item;
+        });
+
+        cart.addItem("Bananas", 11);
+        cart.addItem("Apples", 10);
+        console.log('Total Sum: ' + cart.totalSum());
+
+        console.log(...cart.items);
+    }
+
+    console.log("--- start ---");
+
+    genericDemo();
+    calcuationDemo();
+
+    console.log("done");
+
+    </script>
+</body>
+</html>
